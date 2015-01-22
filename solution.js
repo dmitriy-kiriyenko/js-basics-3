@@ -1,16 +1,16 @@
 function range(start, end, step) {
-  // Write a range function that takes two arguments, start and end,
-  // and returns an array containing all the numbers from start up to (and including) end.
+  if (typeof end === 'undefined') return range(0, start, step);
+  if (typeof step === 'undefined') return range(start, end, 1);
+  if (step * (end - start) < 0) return [];
+  return [start].concat(range(start + step, end, step));
 }
 
 function sum(numbers) {
-  // Write a sum function that takes an array of numbers
-  // and returns the sum of these numbers.
+  return numbers.reduce(function (acc, i) { return acc + i; }, 0)
 }
 
 function reverseArray(arr) {
-  // Write a function which takes an array as argument
-  // and produces a new array that has the same elements in the inverse order.
+  return arr.reduce(function (acc, i) { return [i].concat(acc); }, [])
 }
 
 function reverseArrayInPlace(arr) {

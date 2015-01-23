@@ -1,8 +1,14 @@
 function range(start, end, step) {
   if (typeof end === 'undefined') return range(0, start, step);
   if (typeof step === 'undefined') return range(start, end, 1);
-  if (step * (end - start) < 0) return [];
-  return [start].concat(range(start + step, end, step));
+
+  return (function iter(start, end, step, acc) {
+    if (step * (end - start) < 0) {
+      return acc;
+    } else {
+      return iter(start + step, end, step, acc.concat(start));
+    }
+  })(start, end, step, []);
 }
 
 function sum(numbers) {
@@ -21,52 +27,53 @@ function reverseArrayInPlace(arr) {
 }
 
 function arrayToList(arr) {
-  // Objects, as generic blobs of values, can be used to build all
-  // sorts of data structures. A common data structure is the list
-  // (not to be confused with the array). A list is a nested set of
-  // objects, with the first object holding a reference to the second,
-  // the second to the third, and so on.
-  // For example:
-  //
-  // var list = {
-  //   value: 1,
-  //   rest: {
-  //     value: 2,
-  //     rest: {
-  //       value: 3,
-  //       rest: null
-  //     }
-  //   }
-  // };
-  //
-  // Write a function arrayToList that builds up a data structure like
-  // the previous one when given [1, 2, 3] as argument. It should use
-  // helper function prepend.
+  return reverseArray(arr).reduce(function (acc, i) { return prepend(i, acc); }, null )
 }
 
 function listToArray(list) {
-  // Write a function that produces an array from a list
+  return (function iter(list, acc) {
+    return !list ? acc : iter(list.rest, acc.concat(list.value));
+  })(list, []);
 }
 
 function prepend(item, list) {
-  // Write a function which takes an element and a list and creates a new list
-  // that adds the element to the front of the input list.
+  return { value: item, rest: list };
 }
 
 function nth(n, list) {
-  // Write which takes a list and a number and returns the element at the
-  // given position in the list, or undefined when there is no such element.
-  // It should be recursive.
+  if (n == 0) {
+    return list && list.value;
+  } else if (list) {
+    return nth(n-1, list.rest);
+  }
 }
 
 function deepEqual(a, b) {
-  // The == operator compares objects by identity. But sometimes,
-  // you would prefer to compare the values of their actual properties.
-  //
-  // Write a function, deepEqual, that takes two values and returns true
-  // only if they are the same value or are objects with the same
-  // properties whose values are also equal when compared with
-  // a recursive call to deepEqual.
+  // Yes, I consulted with underscore.
+  // Yes, I don't care of +0, -0 and NaN.
+  // Yes, I don't care about different constructors.
+  // Yes, I don't care about arrays.
+  // Yes, I don't care about Regex and Date.
+  // Continous improvement will move me closer and closer to underscore.
+
+  if (a === b) return true;
+  if (a == null || b == null) return a === b;
+
+  var className = toString.call(a);
+  if (className !== toString.call(b)) return false;
+
+  switch (className) {
+    case '[object String]': return '' + a === '' + b;
+    case '[object Number]':
+    case '[object Boolean]': return +a === +b;
+  }
+
+  if (a.length !== b.length) return false;
+
+  for (var k in a) {
+    if (!deepEqual(a[k], b[k])) return false;
+  }
+  return true;
 }
 
 module.exports = {

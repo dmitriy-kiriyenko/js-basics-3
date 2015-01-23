@@ -14,9 +14,10 @@ function reverseArray(arr) {
 }
 
 function reverseArrayInPlace(arr) {
-  // Write a function that does what the reverse method does:
-  // it modifies the array given as argument in order to reverse
-  // its elements. It should not use the standard reverse method.
+  for (var i = 0; i < ~~(arr.length/2); ++i) {
+    arr[arr.length - i - 1] = [arr[i], arr[i] = arr[arr.length - i - 1]][0];
+  }
+  return arr;
 }
 
 function arrayToList(arr) {

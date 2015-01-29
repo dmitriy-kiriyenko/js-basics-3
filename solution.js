@@ -68,12 +68,12 @@ function deepEqual(a, b) {
     case '[object Boolean]': return +a === +b;
   }
 
-  if (a.length !== b.length) return false;
+  var names = Object.getOwnPropertyNames(a);
+  if (names.length !== Object.getOwnPropertyNames(b).length) return false;
 
-  for (var k in a) {
-    if (!deepEqual(a[k], b[k])) return false;
-  }
-  return true;
+  return names.every(function (k) {
+    return b.hasOwnProperty(k) && deepEqual(a[k], b[k]);
+  });
 }
 
 module.exports = {
